@@ -257,8 +257,7 @@
     <h2 class="h3 text mb-3">Contact</h2>
     <div class="row">
       <div class="col-md-7 d-print-none">
-        <div class="my-2"><form action="https://formspree.io/scodilu@gmail.com"
-    method="POST">
+        <div class="my-2"><form id="my-form" action="https://formspree.io/f/xayzkood" method="POST">
   <div class="row">
     <div class="col-6">
       <input class="form-control" type="text" id="name" name="name" placeholder="Your Name" required>
@@ -270,7 +269,8 @@
   <div class="form-group my-2">
     <textarea class="form-control" style="resize: none;" id="message" name="message" rows="4"  placeholder="Your Message" required></textarea>
   </div>
-  <button class="btn btn-primary mt-2" type="submit">Send</button>
+  <button id="my-form-button" class="btn btn-primary mt-2" type="submit">Send</button>
+  <p id="my-form-status"></p>
 </form>
         </div>
       </div>
@@ -335,6 +335,38 @@
         </div>
       </div>
     </footer>
+    <script>
+    var form = document.getElementById("my-form");
+    
+    async function handleSubmit(event) {
+      event.preventDefault();
+      var status = document.getElementById("my-form-status");
+      var data = new FormData(event.target);
+      fetch(event.target.action, {
+        method: form.method,
+        body: data,
+        headers: {
+            'Accept': 'application/json'
+        }
+      }).then(response => {
+        if (response.ok) {
+          status.innerHTML = "Thanks for your submission!";
+          form.reset()
+        } else {
+          response.json().then(data => {
+            if (Object.hasOwn(data, 'errors')) {
+              status.innerHTML = data["errors"].map(error => error["message"]).join(", ")
+            } else {
+              status.innerHTML = "Oops! There was a problem submitting your form"
+            }
+          })
+        }
+      }).catch(error => {
+        status.innerHTML = "Oops! There was a problem submitting your form"
+      });
+    }
+    form.addEventListener("submit", handleSubmit)
+</script>
     <script src="scripts/bootstrap.bundle.min.js?ver=1.2.0"></script>
     <script src="scripts/aos.js?ver=1.2.0"></script>
     <script src="scripts/main.js?ver=1.2.0"></script>
